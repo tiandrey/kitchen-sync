@@ -33,6 +33,7 @@ module Kitchen
       MAX_TRANSFERS = 64
 
       default_config :ruby_path, '/opt/chef/embedded/bin/ruby'
+      default_config :follow_symlinks, true
 
       def finalize_config!(instance)
         super.tap do
@@ -111,7 +112,7 @@ module Kitchen
           unless safe_stat(remote)
             logger.debug("[SFTP] Fast path upload from #{local} to #{remote}")
             sftp_session.mkdir!(remote) if recursive
-            sftp_session.upload!(local, remote, requests: MAX_TRANSFERS)
+            sftp_session.upload!(local, remote, requests: MAX_TRANSFERS, follow_symlinks: @config[:follow_symlinks])
             return
           end
           # Get checksums for existing files on the remote side.
